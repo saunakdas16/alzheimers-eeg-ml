@@ -17,7 +17,7 @@ An end-to-end EEG analysis pipeline for investigating Alzheimer's disease from r
 
 <br>
 
-**Pilot analysis completed on `sub-001` · Ready for full-dataset processing**
+**Pilot analysis completed on `sub-001` · Full-dataset feature extraction completed**
 
 </div>
 
@@ -33,7 +33,7 @@ The workflow covers the complete analysis path:
 
 **Raw EEG → Quality Inspection → Preprocessing → Artifact Correction → ICA → Spectral Analysis → Epoching → Feature Extraction → Subject-Level Dataset → Machine Learning**
 
-The analysis is being developed and validated on a single pilot participant before being scaled systematically to the complete dataset.
+The analysis was first developed and validated on a single pilot participant and was then systematically applied to the complete dataset of 88 participants.
 
 ---
 
@@ -95,15 +95,14 @@ The preprocessing workflow includes:
 
 Independent Component Analysis (ICA) is used to separate statistically independent signal sources from the multichannel EEG recording.
 
-The pilot workflow uses:
+The ICA workflow uses:
 
-- Infomax ICA
-- Extended Infomax
+- Extended Infomax ICA
 - Rank-aware component selection after average referencing
 - Reproducible random initialization
 - ICLabel-based component classification
 
-Components are evaluated for potential artifact categories such as ocular, muscular, cardiac, and other non-neural sources before cleaning the EEG signal.
+ICLabel classifications are used for automated artifact handling. Components classified as `eye blink` with a predicted probability of at least 0.80 are excluded before reconstructing the cleaned EEG signal.
 
 ### 04. Epoching
 
@@ -156,7 +155,7 @@ This provides a bridge between:
 
 The epoch-level spectral features are aggregated across the 19 EEG channels and across epochs to obtain subject-level representations.
 
-The pilot feature vector contains:
+The subject-level feature vector contains:
 
 - Delta relative power
 - Theta relative power
@@ -170,7 +169,37 @@ Participant metadata such as:
 - Age
 - MMSE
 
-are retained separately for downstream statistical analysis and machine learning.
+are retained alongside the EEG features for downstream statistical analysis and machine learning.
+
+### 09. All-Subject Feature Extraction
+
+The finalized workflow developed during the pilot was automated and applied independently to all 88 participants.
+
+For each participant, the pipeline performs:
+
+- EEG loading
+- 50 Hz notch filtering
+- ICA preparation and fitting
+- ICLabel-based artifact classification
+- Automatic exclusion of high-confidence eye-blink components
+- ICA-based signal reconstruction
+- 4-second epoching
+- Welch PSD calculation
+- Frequency-band power extraction
+- Relative-power calculation
+- Channel averaging
+- Epoch averaging
+- Subject-level feature construction
+
+The resulting dataset contains:
+
+**88 participants × 9 columns**
+
+with one row per participant.
+
+The final feature table is saved locally as:
+
+`data/all_subjects_features.csv`
 
 ---
 
@@ -197,7 +226,7 @@ The completed pilot includes:
 ✅ Scalp topographic visualization  
 ✅ Subject-level feature construction  
 
-The pilot serves as a **method-development and validation stage** before applying the finalized workflow to all 88 participants.
+The pilot served as a **method-development and validation stage** before the finalized workflow was applied to all 88 participants.
 
 > **Important:** The pilot is not treated as a final disease-classification result. Its purpose is to establish a reproducible preprocessing and feature-extraction pipeline.
 
@@ -205,7 +234,7 @@ The pilot serves as a **method-development and validation stage** before applyin
 
 ## 🤖 Machine Learning
 
-After validating the pilot workflow, the next stage is to construct a **subject-level feature matrix** from the complete dataset.
+The complete subject-level feature matrix has now been generated from all 88 participants. The next stage is to use this dataset for machine-learning analysis.
 
 Planned analyses include:
 
@@ -285,8 +314,10 @@ alzheimers-eeg-ml/
 ├── data/                         # Local EEG dataset (Git ignored)
 │
 ├── notebooks/
-│   └── 01_pilot_analysis.ipynb   # Complete pilot workflow
-│
+│   ├── 01_pilot_analysis.ipynb        # Complete pilot workflow
+│   ├── 02_all_subjects_features.ipynb # Automated feature extraction
+│   
 ├── .gitignore
 │
 └── README.md
+```
