@@ -331,11 +331,11 @@ The resulting features can then be investigated statistically and used as inputs
 ```text
 alzheimers-eeg-ml/
 │
-├── data/                         # Local EEG dataset (Git ignored)
+├── data/                                  # Local EEG dataset (Git ignored)
 │
 ├── notebooks/
-│   ├── 01_pilot_analysis.ipynb        # Complete pilot workflow
-│   ├── 02_all_subjects_features.ipynb # Automated feature extraction
+│   ├── 01_pilot_analysis.ipynb            # Complete pilot workflow
+│   ├── 02_all_subjects_features.ipynb     # Automated feature extraction
 │   
 ├── .gitignore
 │
