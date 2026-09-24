@@ -171,36 +171,6 @@ Participant metadata such as:
 
 are retained alongside the EEG features for downstream statistical analysis and machine learning.
 
-### 09. All-Subject Feature Extraction
-
-The finalized workflow developed during the pilot was automated and applied independently to all 88 participants.
-
-For each participant, the pipeline performs:
-
-- EEG loading
-- 50 Hz notch filtering
-- ICA preparation and fitting
-- ICLabel-based artifact classification
-- Automatic exclusion of high-confidence eye-blink components
-- ICA-based signal reconstruction
-- 4-second epoching
-- Welch PSD calculation
-- Frequency-band power extraction
-- Relative-power calculation
-- Channel averaging
-- Epoch averaging
-- Subject-level feature construction
-
-The resulting dataset contains:
-
-**88 participants × 9 columns**
-
-with one row per participant.
-
-The final feature table is saved locally as:
-
-`data/all_subjects_features.csv`
-
 ---
 
 ## 🧪 Pilot Analysis
@@ -229,6 +199,56 @@ The completed pilot includes:
 The pilot served as a **method-development and validation stage** before the finalized workflow was applied to all 88 participants.
 
 > **Important:** The pilot is not treated as a final disease-classification result. Its purpose is to establish a reproducible preprocessing and feature-extraction pipeline.
+
+---
+
+## 🚀 All-Subject Feature Extraction
+
+The workflow established during the pilot was successfully automated and applied independently to the **complete dataset of 88 participants**.
+
+### Automated Workflow
+
+For each participant, the pipeline performs:
+
+- EEG loading
+- 50 Hz notch filtering
+- ICA preparation and Extended Infomax ICA
+- ICLabel-based artifact classification
+- Automatic exclusion of high-confidence eye-blink components
+- ICA-based signal reconstruction
+- 4-second non-overlapping epoching
+- Welch PSD estimation
+- Frequency-band power extraction
+- Relative-power calculation
+- Averaging across EEG channels
+- Averaging across epochs
+- Subject-level feature construction
+
+### 📊 Final Feature Dataset
+
+The automated pipeline produced a complete subject-level feature matrix containing:
+
+**88 participants × 9 columns**
+
+with **one row representing one participant**.
+
+The dataset includes:
+
+- Subject ID
+- Diagnostic group
+- Age
+- MMSE
+- Delta relative power
+- Theta relative power
+- Alpha relative power
+- Beta relative power
+- Gamma relative power
+
+The final feature table is saved locally as:
+
+`data/all_subjects_features.csv`
+
+This dataset serves as the input for the subsequent **machine-learning stage**.
 
 ---
 
