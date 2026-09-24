@@ -134,10 +134,10 @@ For each epoch and channel:
 <div align="center">
 
 ```math
-\mathbf{\text{Relative Band Power}}
+\text{Relative Band Power}
 =
-\mathbf{\frac{\text{Band Power}}
-{\text{Total Power}_{1-45\,\text{Hz}}}}
+\frac{\text{Band Power}}
+{\text{Total Power}_{1-45\,\text{Hz}}}
 ```
 
 </div>
