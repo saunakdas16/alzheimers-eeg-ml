@@ -131,7 +131,12 @@ The analysis focuses on the following frequency bands:
 
 For each epoch and channel:
 
-**Relative Band Power = Band Power / Total Power (1–45 Hz)**
+$$
+\text{Relative Band Power}
+=
+\frac{\text{Band Power}}
+{\text{Total Power}_{1-45\,\text{Hz}}}
+$$
 
 Relative power provides a normalized representation of the contribution of each frequency band to the overall spectral power.
 
