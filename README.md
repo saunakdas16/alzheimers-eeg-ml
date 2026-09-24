@@ -127,16 +127,22 @@ The analysis focuses on the following frequency bands:
 | Beta | 13–30 Hz |
 | Gamma | 30–45 Hz |
 
-## 06. Relative Power
+### 06. Relative Power
 
 For each epoch and channel:
+
+<div align="center">
+
+**Relative Band Power**
 
 ```math
 \text{Relative Band Power}
 =
 \frac{\text{Band Power}}
-{\text{Total Power}_{1-45,\text{Hz}}}
+{\text{Total Power}_{1-45\,\text{Hz}}}
 ```
+
+</div>
 
 Relative power provides a normalized representation of the contribution of each frequency band to the overall spectral power.
 
