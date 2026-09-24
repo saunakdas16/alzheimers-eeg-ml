@@ -1,286 +1,282 @@
-\# EEG-Based Alzheimer's Disease Classification Using MNE-Python \& Machine Learning
+**# EEG-Based Alzheimer's Disease Classification Using MNE-Python \& Machine Learning**
 
 
 
-An EEG analysis and machine-learning project for investigating Alzheimer's disease using resting-state, eyes-closed EEG, spectral analysis, and reproducible Python-based workflows.
+**An EEG analysis and machine-learning project for investigating Alzheimer's disease using resting-state, eyes-closed EEG, spectral analysis, and reproducible Python-based workflows.**
 
 
 
-\## Project Overview
+**## Project Overview**
 
 
 
-This project develops a reproducible pipeline for EEG preprocessing, artifact handling, spectral analysis, topographic visualization, feature extraction, and machine-learning-based classification.
+**This project develops a reproducible pipeline for EEG preprocessing, artifact handling, spectral analysis, topographic visualization, feature extraction, and machine-learning-based classification.**
 
 
 
-The workflow is first developed and validated on a pilot subject before being systematically applied to the complete dataset.
+**The workflow is first developed and validated on a pilot subject before being systematically applied to the complete dataset.**
 
 
 
-\## Dataset
+**## Dataset**
 
 
 
-\*\*OpenNeuro:\*\* `ds004504`
+**\*\*OpenNeuro:\*\* ds004504**
 
 
 
-The dataset contains \*\*88 subjects\*\*:
+**The dataset contains \*\*88 subjects\*\*:**
 
 
 
-\- 36 Alzheimer's disease (AD)
+**- 36 Alzheimer's disease (AD)**
 
-\- 23 Frontotemporal dementia (FTD)
+**- 23 Frontotemporal dementia (FTD)**
 
-\- 29 Cognitively normal (CN)
+**- 29 Cognitively normal (CN)**
 
 
 
-Recordings contain \*\*19 scalp EEG channels\*\* sampled at \*\*500 Hz\*\* during resting-state, eyes-closed conditions.
+**Recordings contain \*\*19 scalp EEG channels\*\* sampled at \*\*500 Hz\*\* during resting-state, eyes-closed conditions.**
 
 
 
-The dataset is stored locally and is excluded from Git tracking.
+**The dataset is stored locally and is excluded from Git tracking.**
 
 
 
-\## Analysis Workflow
+**## Analysis Workflow**
 
 
 
-Raw EEG  
+**The project is being developed in stages:**
 
-↓  
 
-Signal \& metadata inspection  
 
-↓  
+**1. EEG data exploration**
 
-Montage and electrode verification  
+**2. Electrode montage and channel-position inspection**
 
-↓  
+**3. EEG preprocessing**
 
-50-Hz power-line assessment  
+**4. Artifact identification and removal**
 
-↓  
+**5. Independent Component Analysis (ICA)**
 
-50-Hz notch filtering  
+**6. Power spectral density (PSD) analysis**
 
-↓  
+**7. Epoching**
 
-ICA + ICLabel artifact assessment  
+**8. Frequency-band power extraction**
 
-↓  
+**9. Relative-power calculation**
 
-Artifact component removal  
+**10. Scalp topographic visualization**
 
-↓  
+**11. Subject-level feature construction**
 
-4-second fixed-length epochs  
+**12. Feature exploration**
 
-↓  
+**13. Machine-learning classification**
 
-Welch Power Spectral Density (PSD)  
+**14. Subject-wise cross-validation and leakage prevention**
 
-↓  
+**15. Model evaluation**
 
-Frequency-band power  
 
-↓  
 
-Relative band power  
+**## Pilot Analysis**
 
-↓  
 
-Topographic analysis  
 
-↓  
+**A single subject (`sub-001`) is being used as a pilot to develop and validate the processing workflow before applying it to all 88 subjects.**
 
-Subject-level feature extraction  
 
-↓  
 
-Machine Learning  
+**The pilot includes:**
 
-↓  
 
-Model Evaluation
 
+**- Raw EEG inspection**
 
+**- Channel and montage inspection**
 
-\## Pilot Analysis
+**- Power spectral density analysis**
 
+**- Power-line noise investigation**
 
+**- 50 Hz notch filtering**
 
-The preprocessing and feature-extraction pipeline was developed and validated using \*\*`sub-001`\*\*.
+**- ICA-based artifact analysis**
 
+**- ICLabel-based artifact classification**
 
+**- 4-second non-overlapping epochs**
 
-The pilot included:
+**- Welch PSD calculation**
 
+**- Delta, theta, alpha, beta, and gamma band-power extraction**
 
+**- Relative band-power calculation**
 
-\- EEG metadata and signal inspection
+**- Scalp topographic visualization**
 
-\- Electrode montage verification
+**- Subject-level feature construction**
 
-\- Power spectral density analysis
 
-\- Identification and removal of 50-Hz power-line interference
 
-\- Investigation of a narrow 62.5-Hz spectral component
+**The pilot is intended to establish and test the analysis workflow rather than provide a final classification result.**
 
-\- ICA-based artifact separation
 
-\- ICLabel-based component classification
 
-\- Removal of high-confidence ocular components
+**## Frequency Bands**
 
-\- 4-second non-overlapping epoching
 
-\- Welch PSD calculation from 1–45 Hz
 
-\- Delta, theta, alpha, beta, and gamma band-power extraction
+**| Band | Frequency |**
 
-\- Relative-power calculation
+**|---|---|**
 
-\- Scalp topographic visualization
+**| Delta | 1–4 Hz |**
 
-\- Subject-level feature generation and quality control
+**| Theta | 4–8 Hz |**
 
+**| Alpha | 8–13 Hz |**
 
+**| Beta | 13–30 Hz |**
 
-The pilot established and tested the processing workflow that will be applied to the full dataset.
+**| Gamma | 30–45 Hz |**
 
 
 
-\## Frequency Bands
+**## Feature Extraction**
 
 
 
-| Band | Frequency |
+**For each epoch, spectral power is calculated for the defined frequency bands.**
 
-|---|---|
 
-| Delta | 1–4 Hz |
 
-| Theta | 4–8 Hz |
+**Relative power is calculated as:**
 
-| Alpha | 8–13 Hz |
 
-| Beta | 13–30 Hz |
 
-| Gamma | 30–45 Hz |
+**\*\*Relative band power = band power / total power (1–45 Hz)\*\***
 
 
 
-\## Machine Learning
+**Relative band power is initially averaged across the 19 EEG channels and then across epochs to obtain subject-level spectral features.**
 
 
 
-The next stage of the project will construct a \*\*subject-level feature dataset\*\* from all 88 participants.
+**The resulting subject-level feature representation contains:**
 
 
 
-Planned analysis includes:
+**- Delta relative power**
 
+**- Theta relative power**
 
+**- Alpha relative power**
 
-\- Feature exploration and statistical analysis
+**- Beta relative power**
 
-\- Alzheimer's disease vs cognitively normal classification
+**- Gamma relative power**
 
-\- Subject-wise train/test splitting and cross-validation
 
-\- Logistic Regression
 
-\- Support Vector Machine (SVM)
+**Subject metadata such as diagnostic group, age, and MMSE are retained separately for downstream analysis.**
 
-\- Random Forest
 
-\- Accuracy, precision, recall, F1-score, and ROC-AUC
 
-\- Confusion matrices and model comparison
+**## Machine Learning**
 
 
 
-Subject-level separation will be maintained throughout the machine-learning workflow to reduce the risk of data leakage between training and test data.
+**The next stage of the project will construct a \*\*subject-level feature dataset\*\* from the complete set of participants.**
 
 
 
-\## Technologies
+**Planned analysis includes:**
 
 
 
-\*\*Python · MNE-Python · NumPy · SciPy · Pandas · Matplotlib · Scikit-learn · MNE-ICALabel · Git · GitHub\*\*
+**- Feature exploration and statistical analysis**
 
+**- Alzheimer's disease vs cognitively normal classification**
 
+**- Subject-wise train/test splitting**
 
-\## Repository Structure
+**- Subject-wise cross-validation**
 
+**- Prevention of data leakage**
 
+**- Machine-learning model training**
 
-&#x20;   alzheimers-eeg-ml/
+**- Model evaluation**
 
-&#x20;   ├── data/                         # Local dataset; not tracked by Git
 
-&#x20;   ├── notebooks/
 
-&#x20;   │   └── 01\_pilot\_analysis.ipynb
+**Potential models include:**
 
-&#x20;   ├── .gitignore
 
-&#x20;   └── README.md
 
+**- Logistic Regression**
 
+**- Support Vector Machine (SVM)**
 
-\## Project Status
+**- Random Forest**
 
 
 
-\### Completed
+**Evaluation will include appropriate classification metrics such as accuracy, precision, recall, F1-score, ROC-AUC, and confusion matrices.**
 
 
 
-\- Project and GitHub repository setup
+**## Reproducibility**
 
-\- Dataset acquisition and organization
 
-\- EEG data exploration
 
-\- Montage and electrode inspection
+**The analysis is implemented in Python using tools including:**
 
-\- Pilot preprocessing
 
-\- 50-Hz power-line removal
 
-\- ICA/ICLabel artifact assessment
+**- MNE-Python**
 
-\- Spectral feature extraction
+**- NumPy**
 
-\- Relative-power analysis
+**- SciPy**
 
-\- Topographic visualization
+**- Pandas**
 
-\- Subject-level pilot feature generation
+**- Matplotlib**
 
-\- Pilot documentation
+**- Scikit-learn**
 
+**- MNE-ICALabel**
 
 
-\### Next
 
+**The dataset itself is not committed to this repository.**
 
 
-\- Apply the validated pipeline to all 88 subjects
 
-\- Build the complete subject-level feature dataset
+**## Repository Structure**
 
-\- Perform statistical analysis
 
-\- Develop machine-learning models
 
-\- Evaluate classification performance
+**```text**
+
+**alzheimers-eeg-ml/**
+
+**├── data/                  # Local dataset; excluded from Git**
+
+**├── notebooks/             # Analysis notebooks**
+
+**│   └── 01\_pilot\_analysis.ipynb**
+
+**├── .gitignore**
+
+**└── README.md**
 
