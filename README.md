@@ -423,13 +423,7 @@ Provides a subject-level view containing the actual class, predicted class, prob
 
 Visualizes the local contribution of each standardized EEG feature to the Logistic Regression decision for individual test participants.
 
-### 📊 Relative EEG Power Distribution
-
-The distribution of the five relative EEG spectral-power features was visualized separately for Alzheimer's disease (AD) and cognitively normal (CN) participants.
-
-The boxplots summarize the distribution of each frequency band, while the individual points represent the values of individual participants and the open circles indicate the group means.
-
-This visualization provides an exploratory comparison of the EEG feature distributions between the two groups and helps illustrate the characteristics of the features subsequently used as inputs to the Logistic Regression model.
+> Additional- **Relative EEG Power Distribution:** The distribution of the five relative EEG spectral-power features was visualized separately for Alzheimer's disease (AD) and cognitively normal (CN) participants.
 
 ### 📁 Saved Logistic Regression Figures
 
