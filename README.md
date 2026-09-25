@@ -514,7 +514,7 @@ The resulting features can then be investigated statistically and used as inputs
 ```text
 alzheimers-eeg-ml/
 │
-├── data/                                               # Local EEG dataset & feature tables (Git ignored)
+├── data/                                               # Local EEG dataset & features table (Git ignored)
 │
 ├── figures/
 │   └── logistic_regression/
