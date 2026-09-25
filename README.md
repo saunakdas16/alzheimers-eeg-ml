@@ -449,20 +449,20 @@ Shows the direction and relative magnitude of each EEG feature's contribution to
   <img src="figures/logistic_regression/logistic_coefficients.png" width="800">
 </p>
 
-### 🔎 Prediction Confidence
-
-Provides a detailed subject-level visualization showing the actual class, predicted class, probability, decision threshold, and correct versus incorrect predictions.
-
-<p align="center">
-  <img src="figures/logistic_regression/prediction_confidence.png" width="800">
-</p>
-
 ### 🧬 Feature-Contribution Heatmap
 
 Visualizes the local contribution of each standardized EEG feature to the Logistic Regression decision for individual test participants.
 
 <p align="center">
   <img src="figures/logistic_regression/feature_contributions.png" width="800">
+</p>
+
+### 🔎 Prediction Confidence
+
+Provides a detailed subject-level visualization showing the actual class, predicted class, probability, decision threshold, and correct versus incorrect predictions.
+
+<p align="center">
+  <img src="figures/logistic_regression/prediction_confidence.png" width="800">
 </p>
 
 ### 🔒 Data Leakage Considerations
@@ -528,9 +528,9 @@ alzheimers-eeg-ml/
 │
 ├── figures/
 │   └── logistic_regression/
-│       ├── prediction_confidence.png
-│       ├── prediction_confidence_detailed.png
-│       └── feature_contributions.png
+│       ├── feature_contributions.png
+│       ├── logistic_coefficients.png
+│       └── prediction_confience.png
 │
 ├── notebooks/
 │   ├── 01_pilot_analysis.ipynb                 # Complete pilot workflow
