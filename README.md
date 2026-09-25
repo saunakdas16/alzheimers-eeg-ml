@@ -417,10 +417,6 @@ Shows the direction and magnitude of the learned coefficients for the five EEG f
 
 **Prediction Confidence**
 
-Shows the predicted probability of CN for each held-out test participant relative to the 0.5 decision threshold.
-
-**Detailed Prediction Confidence**
-
 Provides a subject-level view containing the actual class, predicted class, probability, decision threshold, and correct versus incorrect prediction.
 
 **Feature-Contribution Heatmap**
