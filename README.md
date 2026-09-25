@@ -483,6 +483,7 @@ The next classification experiments will evaluate:
 - **Random Forest**
 
 These models will be developed in separate notebooks and evaluated using the same subject-level EEG feature dataset and consistent evaluation framework.
+
 ---
 
 ## 🧬 Scientific Rationale
