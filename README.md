@@ -520,7 +520,7 @@ alzheimers-eeg-ml/
 │   └── logistic_regression/
 │       ├── feature_contributions.png
 │       ├── logistic_coefficients.png
-│       └── prediction_confience.png
+│       └── prediction_confidence.png
 │
 ├── notebooks/
 │   ├── 01_pilot_analysis.ipynb                 # Complete pilot workflow
