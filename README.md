@@ -454,7 +454,7 @@ Shows the predicted probability of CN for each held-out test participant relativ
 Provides a detailed subject-level visualization showing the actual class, predicted class, probability, decision threshold, and correct versus incorrect predictions.
 
 <p align="center">
-  <img src="figures/logistic_regression/prediction_confidence_detailed.png" width="800">
+  <img src="figures/logistic_regression/prediction_confidence.png" width="800">
 </p>
 
 ### 🧬 Feature-Contribution Heatmap
