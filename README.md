@@ -514,7 +514,7 @@ The resulting features can then be investigated statistically and used as inputs
 ```text
 alzheimers-eeg-ml/
 │
-├── data/                                       # Local EEG dataset & feature tables (Git ignored)
+├── data/                                               # Local EEG dataset & feature tables (Git ignored)
 │
 ├── figures/
 │   └── logistic_regression/
@@ -523,9 +523,9 @@ alzheimers-eeg-ml/
 │       └── prediction_confidence.png
 │
 ├── notebooks/
-│   ├── 01_pilot_analysis.ipynb                 # Complete pilot workflow
-│   ├── 02_all_subjects_features.ipynb          # Automated feature extraction
-│   └── 03_logistic_regression.ipynb            # AD vs CN Logistic Regression
+│   ├── 01_pilot_analysis.ipynb                         # Complete pilot workflow
+│   ├── 02_all_subjects_features.ipynb                  # Automated feature extraction
+│   └── 03_machine_learning_logistic_regression.ipynb   # AD vs CN Logistic Regression
 │   
 ├── .gitignore
 │
