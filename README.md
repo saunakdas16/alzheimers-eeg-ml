@@ -441,15 +441,15 @@ The Logistic Regression figures are organized under:
 
 `figures/logistic_regression/`
 
-### 🎯 Prediction Confidence
+### 🎯 Logistic Coefficients
 
-Shows the predicted probability of CN for each held-out test participant relative to the 0.5 decision threshold.
+Shows the direction and relative magnitude of each EEG feature's contribution to the model's classification decision.
 
 <p align="center">
-  <img src="figures/logistic_regression/prediction_confidence.png" width="800">
+  <img src="figures/logistic_regression/logistic_coefficients.png" width="800">
 </p>
 
-### 🔎 Detailed Prediction Confidence
+### 🔎 Prediction Confidence
 
 Provides a detailed subject-level visualization showing the actual class, predicted class, probability, decision threshold, and correct versus incorrect predictions.
 
