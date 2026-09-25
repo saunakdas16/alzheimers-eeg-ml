@@ -17,7 +17,7 @@ An end-to-end EEG analysis pipeline for investigating Alzheimer's disease from r
 
 <br>
 
-**Pilot analysis completed on `sub-001` · Full-dataset feature extraction completed**
+**Pilot analysis completed on `sub-001` · Full-dataset feature extraction completed · Logistic Regression completed**
 
 </div>
 
@@ -136,7 +136,7 @@ For each epoch and channel:
 \text{Relative Band Power}
 =
 \frac{\text{Band Power}}
-{\text{Total Power}_{1-45\,\text{Hz}}}
+{\text{Delta + Theta + Alpha + Beta + Gamma Power}}
 ```
 
 </div>
@@ -248,49 +248,225 @@ The final feature table is saved locally as:
 
 `data/all_subjects_features.csv`
 
-This dataset serves as the input for the subsequent **machine-learning stage**.
+This dataset serves as the input for the subsequent **machine-learning analyses**.
 
 ---
 
 ## 🤖 Machine Learning
 
-The complete subject-level feature matrix has now been generated from all 88 participants. The next stage is to use this dataset for machine-learning analysis.
+The complete subject-level feature matrix was used as the input for the machine-learning stage.
 
-Planned analyses include:
-
-### Classification
-
-Primary planned comparison:
+The first classification experiment was performed using **Logistic Regression** to distinguish:
 
 **Alzheimer's disease (AD) vs Cognitively Normal (CN)**
 
-Potential models:
+Participants diagnosed with Frontotemporal Dementia (FTD) were excluded from this binary classification experiment.
 
-- Logistic Regression
-- Support Vector Machine (SVM)
-- Random Forest
+### 🧠 Logistic Regression
 
-### Evaluation
+Logistic Regression was used as the first machine-learning model because it provides a simple and interpretable baseline for binary classification.
 
-Model performance will be assessed using appropriate metrics including:
+The model was trained using the five subject-level EEG spectral features:
 
-- Accuracy
-- Precision
-- Recall
-- F1-score
-- ROC-AUC
-- Confusion matrix
+- Delta relative power
+- Theta relative power
+- Alpha relative power
+- Beta relative power
+- Gamma relative power
 
-### 🔒 Preventing Data Leakage
+The classification dataset therefore contained:
 
-Because multiple EEG epochs originate from the same participant, epochs from a single subject must **not** be randomly divided between training and test sets.
+**65 participants**
 
-The machine-learning stage will therefore use:
+| Group | Subjects |
+|---|---:|
+| Alzheimer's disease (AD) | 36 |
+| Cognitively normal (CN) | 29 |
+| **Total** | **65** |
 
-**subject-wise train/test splitting and subject-wise cross-validation**
+### 🔹 Feature Preparation
 
-This ensures that the model is evaluated on participants whose EEG data were not used during training.
+The five EEG features were standardized using `StandardScaler`.
 
+Standardization transforms each feature so that it is centered around zero and scaled according to its standard deviation.
+
+The data were then divided into:
+
+- **80% training data**
+- **20% held-out test data**
+
+Stratified splitting was used so that the class distribution was maintained between the training and test sets.
+
+### 🔹 Model Training
+
+The Logistic Regression model was trained using the standardized training features.
+
+The model learned a set of coefficients describing how each EEG feature contributes to the classification decision.
+
+A coefficient with a positive value contributes toward the **CN** class, while a negative coefficient contributes toward the **AD** class in this experiment.
+
+### 📊 Initial Test-Set Results
+
+The model was evaluated on the held-out test set of **13 participants**.
+
+The initial results were:
+
+| Metric | Result |
+|---|---:|
+| Test Accuracy | **84.6%** |
+| ROC-AUC | **0.976** |
+
+The confusion matrix was:
+
+```text
+                 Predicted
+                 AD    CN
+
+Actual AD         5     2
+Actual CN         0     6
+```
+
+This corresponds to:
+
+- **5 AD participants** correctly classified as AD
+- **2 AD participants** classified as CN
+- **6 CN participants** correctly classified as CN
+- **0 CN participants** classified as AD
+
+### 📈 Classification Metrics
+
+The classification report for the held-out test set was:
+
+| Class | Precision | Recall | F1-score | Support |
+|---|---:|---:|---:|---:|
+| AD | 1.00 | 0.71 | 0.83 | 7 |
+| CN | 0.75 | 1.00 | 0.86 | 6 |
+
+Overall test accuracy was **84.6%**.
+
+Precision describes how often predictions of a class were correct, while recall describes how many participants belonging to that actual class were correctly identified.
+
+### 📊 ROC-AUC
+
+The Logistic Regression model produced an initial **ROC-AUC of 0.976** on the held-out test set.
+
+The ROC curve evaluates model performance across different probability thresholds by comparing:
+
+- **True Positive Rate (TPR)**
+- **False Positive Rate (FPR)**
+
+The AUC summarizes the area under this curve.
+
+For this analysis, the probability of the **CN** class was used to construct the ROC curve.
+
+### 🔄 Cross-Validation
+
+A 5-fold stratified cross-validation experiment was also performed.
+
+The initial cross-validation accuracy scores were:
+
+```text
+0.923
+0.769
+0.692
+0.846
+0.615
+```
+
+The resulting mean and standard deviation were:
+
+**Mean accuracy: 76.9%**
+
+**Standard deviation: 10.9%**
+
+These results show variability between folds, which is important given the relatively small number of participants.
+
+> **Methodological note:** This initial cross-validation experiment was performed on the complete 65-participant AD/CN dataset and therefore included the subjects from the initial held-out test set. Consequently, these cross-validation results are treated as exploratory rather than as the final independent validation estimate. The final model-comparison stage will use cross-validation only within the training set while keeping the test set untouched.
+
+### 🧮 Logistic Regression Coefficients
+
+The learned coefficients were:
+
+| EEG Feature | Coefficient |
+|---|---:|
+| Delta | 0.164 |
+| Theta | -1.450 |
+| Alpha | 0.594 |
+| Beta | 0.384 |
+| Gamma | -0.070 |
+
+Because the features were standardized before model fitting, the coefficient magnitudes can be compared within this model to examine their relative contribution to the classification decision.
+
+The coefficients describe model behavior and should not be interpreted as evidence of a causal biological relationship.
+
+### 🎯 Model Visualizations
+
+The Logistic Regression analysis includes several visualizations:
+
+**ROC Curve**
+
+Displays the relationship between true-positive rate and false-positive rate across probability thresholds.
+
+**Confusion Matrix**
+
+Displays the correct and incorrect predictions for AD and CN.
+
+**Logistic Regression Coefficients**
+
+Shows the direction and magnitude of the learned coefficients for the five EEG features.
+
+**Prediction Confidence**
+
+Shows the predicted probability of CN for each held-out test participant relative to the 0.5 decision threshold.
+
+**Detailed Prediction Confidence**
+
+Provides a subject-level view containing the actual class, predicted class, probability, decision threshold, and correct versus incorrect prediction.
+
+**Feature-Contribution Heatmap**
+
+Visualizes the local contribution of each standardized EEG feature to the Logistic Regression decision for individual test participants.
+
+### 📊 Relative EEG Power Distribution
+
+The distribution of the five relative EEG spectral-power features was visualized separately for Alzheimer's disease (AD) and cognitively normal (CN) participants.
+
+The boxplots summarize the distribution of each frequency band, while the individual points represent the values of individual participants and the open circles indicate the group means.
+
+This visualization provides an exploratory comparison of the EEG feature distributions between the two groups and helps illustrate the characteristics of the features subsequently used as inputs to the Logistic Regression model.
+
+### 📁 Saved Logistic Regression Figures
+
+The Logistic Regression figures are organized under:
+
+`figures/logistic_regression/`
+
+Currently saved:
+
+- `prediction_confidence.png`
+- `prediction_confidence_detailed.png`
+- `feature_contributions.png`
+
+Additional model figures such as the ROC curve, confusion matrix, coefficient plot, and feature-distribution visualization are part of the notebook analysis and can be saved to the same directory.
+
+### 🔒 Data Leakage Considerations
+
+A major consideration in EEG machine learning is that multiple epochs can originate from the same participant.
+
+Therefore, epochs from one participant must never be randomly distributed between training and test sets.
+
+The final evaluation workflow will maintain **subject-level separation**, ensuring that information from a participant used for model training does not appear in the independent test set.
+
+Future model experiments will use the same subject-level split and evaluation framework for fair comparison between models.
+
+### 🔜 Next Models
+
+The next classification experiments will evaluate:
+
+- **Support Vector Machine (SVM)**
+- **Random Forest**
+
+These models will be developed in separate notebooks and evaluated using the same subject-level EEG feature dataset and consistent evaluation framework.
 ---
 
 ## 🧬 Scientific Rationale
@@ -331,11 +507,18 @@ The resulting features can then be investigated statistically and used as inputs
 ```text
 alzheimers-eeg-ml/
 │
-├── data/                                  # Local EEG dataset (Git ignored)
+├── data/                                  # Local EEG dataset & feature tables (Git ignored)
+│
+├── figures/
+│   └── logistic_regression/
+│       ├── prediction_confidence.png
+│       ├── prediction_confidence_detailed.png
+│       └── feature_contributions.png
 │
 ├── notebooks/
 │   ├── 01_pilot_analysis.ipynb            # Complete pilot workflow
 │   ├── 02_all_subjects_features.ipynb     # Automated feature extraction
+│   └── 03_logistic_regression.ipynb       # AD vs CN Logistic Regression
 │   
 ├── .gitignore
 │
