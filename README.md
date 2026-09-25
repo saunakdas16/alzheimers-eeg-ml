@@ -441,13 +441,29 @@ The Logistic Regression figures are organized under:
 
 `figures/logistic_regression/`
 
-Currently saved:
+### 🎯 Prediction Confidence
 
-- `prediction_confidence.png`
-- `prediction_confidence_detailed.png`
-- `feature_contributions.png`
+Shows the predicted probability of CN for each held-out test participant relative to the 0.5 decision threshold.
 
-Additional model figures such as the ROC curve, confusion matrix, coefficient plot, and feature-distribution visualization are part of the notebook analysis and can be saved to the same directory.
+<p align="center">
+  <img src="figures/logistic_regression/prediction_confidence.png" width="800">
+</p>
+
+### 🔎 Detailed Prediction Confidence
+
+Provides a detailed subject-level visualization showing the actual class, predicted class, probability, decision threshold, and correct versus incorrect predictions.
+
+<p align="center">
+  <img src="figures/logistic_regression/prediction_confidence_detailed.png" width="800">
+</p>
+
+### 🧬 Feature-Contribution Heatmap
+
+Visualizes the local contribution of each standardized EEG feature to the Logistic Regression decision for individual test participants.
+
+<p align="center">
+  <img src="figures/logistic_regression/feature_contributions.png" width="800">
+</p>
 
 ### 🔒 Data Leakage Considerations
 
@@ -507,7 +523,7 @@ The resulting features can then be investigated statistically and used as inputs
 ```text
 alzheimers-eeg-ml/
 │
-├── data/                                  # Local EEG dataset & feature tables (Git ignored)
+├── data/                                       # Local EEG dataset & feature tables (Git ignored)
 │
 ├── figures/
 │   └── logistic_regression/
@@ -516,9 +532,9 @@ alzheimers-eeg-ml/
 │       └── feature_contributions.png
 │
 ├── notebooks/
-│   ├── 01_pilot_analysis.ipynb            # Complete pilot workflow
-│   ├── 02_all_subjects_features.ipynb     # Automated feature extraction
-│   └── 03_logistic_regression.ipynb       # AD vs CN Logistic Regression
+│   ├── 01_pilot_analysis.ipynb                 # Complete pilot workflow
+│   ├── 02_all_subjects_features.ipynb          # Automated feature extraction
+│   └── 03_logistic_regression.ipynb            # AD vs CN Logistic Regression
 │   
 ├── .gitignore
 │
