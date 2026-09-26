@@ -371,7 +371,7 @@ The learned coefficients were:
 
 Because the features were standardized before model fitting, the coefficient magnitudes can be compared within this model to examine their relative contribution to the classification decision.
 
-The coefficients describe model behavior and should not be interpreted as evidence of a causal biological relationship.
+> The coefficients describe model behavior and should not be interpreted as evidence of a causal biological relationship.
 
 ---
 
