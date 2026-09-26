@@ -17,7 +17,7 @@ An end-to-end EEG analysis pipeline for investigating Alzheimer's disease from r
 
 <br>
 
-**Pilot analysis completed on `sub-001` · Full-dataset feature extraction completed · Logistic Regression completed**
+**Pilot analysis completed on `sub-001` · Full-dataset feature extraction completed · Logistic Regression completed · SVM completed**
 
 </div>
 
@@ -256,25 +256,15 @@ This dataset serves as the input for the subsequent **machine-learning analyses*
 
 The complete subject-level feature matrix was used as the input for the machine-learning stage.
 
-The first classification experiment was performed using **Logistic Regression** to distinguish:
+The classification experiments focus on:
 
 **Alzheimer's disease (AD) vs Cognitively Normal (CN)**
 
-Participants diagnosed with Frontotemporal Dementia (FTD) were excluded from this binary classification experiment.
+Participants diagnosed with Frontotemporal Dementia (FTD) were excluded from these binary classification experiments.
 
-### 🧠 Logistic Regression
+### 🧠 Classification Dataset
 
-Logistic Regression was used as the first machine-learning model because it provides a simple and interpretable baseline for binary classification.
-
-The model was trained using the five subject-level EEG spectral features:
-
-- Delta relative power
-- Theta relative power
-- Alpha relative power
-- Beta relative power
-- Gamma relative power
-
-The classification dataset therefore contained:
+The machine-learning dataset contained:
 
 **65 participants**
 
@@ -284,32 +274,42 @@ The classification dataset therefore contained:
 | Cognitively normal (CN) | 29 |
 | **Total** | **65** |
 
-### 🔹 Feature Preparation
+Each participant was represented using five subject-level EEG spectral features:
+
+- Delta relative power
+- Theta relative power
+- Alpha relative power
+- Beta relative power
+- Gamma relative power
+
+### 🔹 Train-Test Strategy
+
+The 65 participants were divided using a stratified 80/20 train-test split:
+
+- **52 participants** for training
+- **13 participants** for the held-out test set
+
+The same train-test split was used for the Logistic Regression and SVM experiments.
+
+The final 13-participant test set was kept separate during model selection and hyperparameter tuning.
+
+---
+
+## 🧮 Logistic Regression
+
+Logistic Regression was used as the first classification model and provides an interpretable linear baseline for binary classification.
+
+### Model Preparation
 
 The five EEG features were standardized using `StandardScaler`.
 
-Standardization transforms each feature so that it is centered around zero and scaled according to its standard deviation.
+The standardized features were used to train a Logistic Regression classifier on the 52 training participants.
 
-The data were then divided into:
+The model learned coefficients describing the direction and relative magnitude of each feature's contribution to the classification decision.
 
-- **80% training data**
-- **20% held-out test data**
+### Initial Test-Set Results
 
-Stratified splitting was used so that the class distribution was maintained between the training and test sets.
-
-### 🔹 Model Training
-
-The Logistic Regression model was trained using the standardized training features.
-
-The model learned a set of coefficients describing how each EEG feature contributes to the classification decision.
-
-A coefficient with a positive value contributes toward the **CN** class, while a negative coefficient contributes toward the **AD** class in this experiment.
-
-### 📊 Initial Test-Set Results
-
-The model was evaluated on the held-out test set of **13 participants**.
-
-The initial results were:
+The Logistic Regression model was evaluated on the held-out test set of 13 participants.
 
 | Metric | Result |
 |---|---:|
@@ -333,37 +333,11 @@ This corresponds to:
 - **6 CN participants** correctly classified as CN
 - **0 CN participants** classified as AD
 
-### 📈 Classification Metrics
+### Cross-Validation
 
-The classification report for the held-out test set was:
+An initial 5-fold stratified cross-validation experiment was performed on the complete 65-participant AD/CN dataset.
 
-| Class | Precision | Recall | F1-score | Support |
-|---|---:|---:|---:|---:|
-| AD | 1.00 | 0.71 | 0.83 | 7 |
-| CN | 0.75 | 1.00 | 0.86 | 6 |
-
-Overall test accuracy was **84.6%**.
-
-Precision describes how often predictions of a class were correct, while recall describes how many participants belonging to that actual class were correctly identified.
-
-### 📊 ROC-AUC
-
-The Logistic Regression model produced an initial **ROC-AUC of 0.976** on the held-out test set.
-
-The ROC curve evaluates model performance across different probability thresholds by comparing:
-
-- **True Positive Rate (TPR)**
-- **False Positive Rate (FPR)**
-
-The AUC summarizes the area under this curve.
-
-For this analysis, the probability of the **CN** class was used to construct the ROC curve.
-
-### 🔄 Cross-Validation
-
-A 5-fold stratified cross-validation experiment was also performed.
-
-The initial cross-validation accuracy scores were:
+The fold accuracies were:
 
 ```text
 0.923
@@ -373,15 +347,15 @@ The initial cross-validation accuracy scores were:
 0.615
 ```
 
-The resulting mean and standard deviation were:
+The mean accuracy was:
 
-**Mean accuracy: 76.9%**
+**76.9%**
 
-**Standard deviation: 10.9%**
+The standard deviation was:
 
-These results show variability between folds, which is important given the relatively small number of participants.
+**10.9%**
 
-> **Methodological note:** This initial cross-validation experiment was performed on the complete 65-participant AD/CN dataset and therefore included the subjects from the initial held-out test set. Consequently, these cross-validation results are treated as exploratory rather than as the final independent validation estimate. The final model-comparison stage will use cross-validation only within the training set while keeping the test set untouched.
+> **Methodological note:** This initial Logistic Regression cross-validation experiment included the subjects from the held-out test set because cross-validation was performed on all 65 participants. Therefore, these cross-validation results are treated as exploratory rather than as a final independent validation estimate. The SVM experiment subsequently used cross-validation only within the 52 training participants.
 
 ### 🧮 Logistic Regression Coefficients
 
@@ -399,80 +373,242 @@ Because the features were standardized before model fitting, the coefficient mag
 
 The coefficients describe model behavior and should not be interpreted as evidence of a causal biological relationship.
 
-### 🎯 Model Visualizations
+---
 
-The Logistic Regression analysis includes several visualizations:
+## ⚙️ Support Vector Machine
 
-**ROC Curve**
+The second classification experiment used a **Support Vector Machine (SVM)** with an RBF kernel.
 
-Displays the relationship between true-positive rate and false-positive rate across probability thresholds.
+The RBF kernel allows the SVM to model nonlinear decision boundaries.
 
-**Confusion Matrix**
+### Initial SVM Configuration
 
-Displays the correct and incorrect predictions for AD and CN.
+The initial SVM used:
 
-**Logistic Regression Coefficients**
+```python
+SVC()
+```
 
-Shows the direction and magnitude of the learned coefficients for the five EEG features.
+with the default configuration:
 
-**Prediction Confidence**
+- **Kernel:** RBF
+- **C:** 1.0
+- **Gamma:** `scale`
 
-Provides a subject-level view containing the actual class, predicted class, probability, decision threshold, and correct versus incorrect prediction.
+### Initial Test-Set Results
 
-**Feature-Contribution Heatmap**
+The initial SVM was evaluated on the same held-out test set of 13 participants.
 
-Visualizes the local contribution of each standardized EEG feature to the Logistic Regression decision for individual test participants.
+**Test accuracy: 76.9%**
 
-> Additional- **Relative EEG Power Distribution:** The distribution of the five relative EEG spectral-power features was visualized separately for Alzheimer's disease (AD) and cognitively normal (CN) participants.
+The confusion matrix was:
 
-### 📁 Saved Logistic Regression Figures
+```text
+                 Predicted
+                 AD    CN
 
-The Logistic Regression figures are organized under:
+Actual AD         4     3
+Actual CN         0     6
+```
 
-`figures/logistic_regression/`
+This corresponds to:
 
-### 🎯 Logistic Coefficients
+- **4 AD participants** correctly classified as AD
+- **3 AD participants** classified as CN
+- **6 CN participants** correctly classified as CN
+- **0 CN participants** classified as AD
 
-Shows the direction and relative magnitude of each EEG feature's contribution to the model's classification decision.
+The initial ROC-AUC was:
 
-<p align="center">
-  <img src="figures/logistic_regression/logistic_coefficients.png" width="800">
-</p>
+**0.952**
 
-### 🧬 Feature-Contribution Heatmap
+### Initial Classification Metrics
 
-Visualizes the local contribution of each standardized EEG feature to the Logistic Regression decision for individual test participants.
+The initial SVM classification report was:
 
-<p align="center">
-  <img src="figures/logistic_regression/feature_contributions.png" width="800">
-</p>
+| Class | Precision | Recall | F1-score | Support |
+|---|---:|---:|---:|---:|
+| AD | 1.00 | 0.57 | 0.73 | 7 |
+| CN | 0.67 | 1.00 | 0.80 | 6 |
+
+Overall accuracy was:
+
+**76.9%**
+
+### Cross-Validation and Hyperparameter Tuning
+
+For the SVM, 5-fold stratified cross-validation was performed **only on the 52 training participants**.
+
+The initial SVM cross-validation scores were:
+
+```text
+0.636
+0.727
+0.800
+0.800
+0.900
+```
+
+The mean cross-validation accuracy was:
+
+**77.3%**
+
+The standard deviation was:
+
+**8.8%**
+
+`GridSearchCV` was then used to evaluate:
+
+- `C`: 0.1, 1, 10, 100
+- `gamma`: `scale`, 0.01, 0.1, 1
+
+This produced **16 parameter combinations**, each evaluated using 5-fold stratified cross-validation on the 52 training participants.
+
+### Best Parameters
+
+The selected parameters were:
+
+```text
+C = 10
+gamma = 0.01
+```
+
+Best mean cross-validation accuracy:
+
+**81.1%**
+
+Standard deviation for the selected parameter combination:
+
+**7.7%**
+
+### Tuned SVM Test Results
+
+The tuned SVM was evaluated on the same untouched 13-participant test set.
+
+| Metric | Result |
+|---|---:|
+| Test Accuracy | **76.9%** |
+| ROC-AUC | **1.000** |
+
+The tuned model produced the same class predictions as the initial SVM on the held-out test set.
+
+Therefore:
+
+**10 of 13 test participants were correctly classified.**
+
+> **Important:** The tuned SVM ROC-AUC of 1.000 is based on the ranking of decision scores for this particular 13-participant test set. Given the small test-set size, it should not be interpreted as evidence of perfect generalization.
+
+---
+
+## 📊 Model Visualizations
+
+The Logistic Regression and SVM analyses include corresponding visualizations that allow the two models to be viewed side by side.
 
 ### 🔎 Prediction Confidence
 
-Provides a detailed subject-level visualization showing the actual class, predicted class, probability, decision threshold, and correct versus incorrect predictions.
+<table>
+<tr>
+<td align="center"><strong>Logistic Regression</strong></td>
+<td align="center"><strong>SVM</strong></td>
+</tr>
+<tr>
+<td align="center">
+<img src="figures/logistic_regression/prediction_confidence.png" width="450">
+</td>
+<td align="center">
+<img src="figures/svm/prediction_confidence.png" width="450">
+</td>
+</tr>
+</table>
+
+The Logistic Regression visualization shows predicted class probabilities, while the SVM visualization shows decision scores relative to the SVM decision boundary.
+
+### 🧬 Model Feature Interpretation
+
+<table>
+<tr>
+<td align="center"><strong>Logistic Regression Coefficients</strong></td>
+<td align="center"><strong>SVM Feature Importance</strong></td>
+</tr>
+<tr>
+<td align="center">
+<img src="figures/logistic_regression/logistic_coefficients.png" width="450">
+</td>
+<td align="center">
+<img src="figures/svm/feature_importance.png" width="450">
+</td>
+</tr>
+</table>
+
+The Logistic Regression plot shows the direction and relative magnitude of the learned coefficients.
+
+The SVM plot uses permutation importance, showing how much model accuracy changes when an EEG feature is randomly shuffled.
+
+These visualizations describe different model properties and should not be interpreted as directly equivalent quantities.
+
+### 🧠 Feature Contributions
+
+<table>
+<tr>
+<td align="center"><strong>Logistic Regression</strong></td>
+<td align="center"><strong>SVM</strong></td>
+</tr>
+<tr>
+<td align="center">
+<img src="figures/logistic_regression/feature_contributions.png" width="450">
+</td>
+<td align="center">
+<img src="figures/svm/feature_contributions.png" width="450">
+</td>
+</tr>
+</table>
+
+The Logistic Regression heatmap visualizes the local contribution of standardized EEG features to the linear model decision.
+
+The SVM heatmap visualizes the change in SVM decision score when individual test-set features are replaced by their corresponding training-set means.
+
+Because the SVM uses an RBF kernel, these values should not be interpreted as Logistic Regression-style coefficients.
+
+---
+
+## 📈 Logistic Regression vs SVM
+
+A dedicated comparison visualization was created using the saved results from both models.
+
+The comparison shows:
+
+- Test Accuracy
+- ROC-AUC
+
+Both models were evaluated on the **same 13-participant held-out test set**.
 
 <p align="center">
-  <img src="figures/logistic_regression/prediction_confidence.png" width="800">
+  <img src="figures/model_comparison/logistic_regression_vs_svm.png" width="900">
 </p>
 
-### 🔒 Data Leakage Considerations
+The comparison visualization presents the recorded test-set results side by side. It does not account for the difference in cross-validation protocols between the initial Logistic Regression analysis and the corrected SVM analysis.
+
+---
+
+## 🔒 Data Leakage Considerations
 
 A major consideration in EEG machine learning is that multiple epochs can originate from the same participant.
 
-Therefore, epochs from one participant must never be randomly distributed between training and test sets.
+Therefore, subject-level separation is maintained throughout the machine-learning workflow.
 
-The final evaluation workflow will maintain **subject-level separation**, ensuring that information from a participant used for model training does not appear in the independent test set.
+For both models, the final model fits used the **52 training participants**, while the **13-participant test set** was reserved for final held-out evaluation.
 
-Future model experiments will use the same subject-level split and evaluation framework for fair comparison between models.
+The initial Logistic Regression cross-validation experiment was performed separately on all 65 participants and therefore included the held-out test subjects. This result is treated as exploratory and is not considered an independent validation estimate.
 
-### 🔜 Next Models
+For SVM hyperparameter tuning, cross-validation was performed only within the **52 training participants**, with scaling included inside the pipeline so that scaling parameters were learned independently within each training fold.
 
-The next classification experiments will evaluate:
+Future model experiments will follow the corrected approach of performing cross-validation and model selection only within the training set.
 
-- **Support Vector Machine (SVM)**
-- **Random Forest**
+---
 
-These models will be developed in separate notebooks and evaluated using the same subject-level EEG feature dataset and consistent evaluation framework.
+## 🔜 Next Model
+
+The next classification experiment will evaluate a **Random Forest** classifier using the same subject-level EEG feature dataset and a consistent evaluation framework.
 
 ---
 
@@ -509,6 +645,16 @@ The resulting features can then be investigated statistically and used as inputs
 
 ---
 
+## 📚 References
+
+- OpenNeuro Dataset: [ds004504](https://openneuro.org/datasets/ds004504)
+- Dataset publication: [A Dataset of EEG Recordings for Alzheimer's Disease, Frontotemporal Dementia and Healthy Controls](https://doi.org/10.3390/data8060095)
+- [MNE-Python](https://mne.tools/)
+- [Scikit-learn](https://scikit-learn.org/)
+- [MNE-ICALabel](https://mne.tools/mne-icalabel/)
+
+---
+
 ## 📁 Repository Structure
 
 ```text
@@ -517,16 +663,25 @@ alzheimers-eeg-ml/
 ├── data/                                               # Local EEG dataset & features table (Git ignored)
 │
 ├── figures/
-│   └── logistic_regression/
-│       ├── feature_contributions.png
-│       ├── logistic_coefficients.png
-│       └── prediction_confidence.png
+│   ├── logistic_regression/
+│   │   ├── feature_contributions.png
+│   │   ├── logistic_coefficients.png
+│   │   └── prediction_confidence.png
+│   │
+│   ├── svm/
+│   │   ├── feature_contributions.png
+│   │   ├── feature_importance.png
+│   │   └── prediction_confidence.png
+│   │
+│   └── model_comparison/
+│       └── logistic_regression_vs_svm.png
 │
 ├── notebooks/
 │   ├── 01_pilot_analysis.ipynb                         # Complete pilot workflow
 │   ├── 02_all_subjects_features.ipynb                  # Automated feature extraction
-│   └── 03_machine_learning_logistic_regression.ipynb   # AD vs CN Logistic Regression
-│   
+│   ├── 03_machine_learning_logistic_regression.ipynb   # AD vs CN Logistic Regression
+│   └── 04_machine_learning_svm.ipynb                   # AD vs CN Support Vector Machine
+│ 
 ├── .gitignore
 │
 └── README.md
