@@ -567,7 +567,7 @@ The Logistic Regression heatmap visualizes the local contribution of standardize
 
 The SVM heatmap visualizes the change in SVM decision score when individual test-set features are replaced by their corresponding training-set means.
 
-Because the SVM uses an RBF kernel, these values should not be interpreted as Logistic Regression-style coefficients.
+> Because the SVM uses an RBF kernel, these values should not be interpreted as Logistic Regression-style coefficients.
 
 ---
 
@@ -586,7 +586,7 @@ Both models were evaluated on the **same 13-participant held-out test set**.
   <img src="figures/model_comparison/logistic_regression_vs_svm.png" width="900">
 </p>
 
-The comparison visualization presents the recorded test-set results side by side. It does not account for the difference in cross-validation protocols between the initial Logistic Regression analysis and the corrected SVM analysis.
+> The comparison visualization presents the recorded test-set results side by side. It does not account for the difference in cross-validation protocols between the initial Logistic Regression analysis and the corrected SVM analysis.
 
 ---
 
