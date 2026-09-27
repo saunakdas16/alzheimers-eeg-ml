@@ -657,7 +657,7 @@ The Logistic Regression plot shows the direction and relative magnitude of the l
 
 The SVM and Random Forest plots use permutation importance, showing how model accuracy changes when an EEG feature is randomly shuffled.
 
-These visualizations describe different model properties and should not be interpreted as directly equivalent quantities.
+> These visualizations describe different model properties and should not be interpreted as directly equivalent quantities.
 
 ### 🧠 Feature Contributions
 
@@ -686,7 +686,7 @@ The SVM heatmap visualizes the change in SVM decision score when individual test
 
 The Random Forest heatmap visualizes the change in predicted CN probability when individual test-set features are replaced by their corresponding training-set means.
 
-Because the SVM and Random Forest use nonlinear models, these values should not be interpreted as Logistic Regression-style coefficients.
+> Because the SVM and Random Forest use nonlinear models, these values should not be interpreted as Logistic Regression-style coefficients.
 
 ---
 
@@ -705,7 +705,7 @@ All three models were evaluated on the **same 13-participant held-out test set**
   <img src="figures/model_comparison/logistic_regression_vs_svm_vs_random_forest.png" width="900">
 </p>
 
-The comparison visualization presents the recorded test-set results for all three models. The test set is small, so these metrics should be interpreted as results for this specific experimental split rather than as estimates of clinical diagnostic performance.
+> The comparison visualization presents the recorded test-set results for all three models. The test set is small, so these metrics should be interpreted as results for this specific experimental split rather than as estimates of clinical diagnostic performance.
 
 ---
 
@@ -729,13 +729,13 @@ Future model experiments will continue to use subject-level separation and train
 
 ---
 
-## 🔜 Next Stage
+## 🔮 Future Stages 
 
-The current classification stage has now been completed using:
+The current classification and analysis stage has now been completed using:
 
 **Logistic Regression → SVM → Random Forest**
 
-The next stage will focus on consolidating the three-model results, examining the model behavior and EEG feature patterns more systematically, and documenting the findings within the project.
+The future stages will largely focus on consolidating model results, examining the model behavior and EEG feature patterns more systematically, and documenting the findings within the project.
 
 ---
 
