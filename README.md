@@ -17,7 +17,7 @@ An end-to-end EEG analysis pipeline for investigating Alzheimer's disease from r
 
 <br>
 
-**Pilot analysis completed on `sub-001` · Full-dataset feature extraction completed · Logistic Regression completed · SVM completed**
+**Pilot analysis completed on `sub-001` · Full-dataset feature extraction completed · Logistic Regression completed · SVM completed · Random Forest completed**
 
 </div>
 
@@ -33,7 +33,7 @@ The workflow covers the complete analysis path:
 
 **Raw EEG → Quality Inspection → Preprocessing → Artifact Correction → ICA → Spectral Analysis → Epoching → Feature Extraction → Subject-Level Dataset → Machine Learning**
 
-The analysis was first developed and validated on a single pilot participant and was then systematically applied to the complete dataset of 88 participants.
+The analysis was first developed and tested on a single pilot participant and was then systematically applied to the complete dataset of 88 participants.
 
 ---
 
@@ -196,7 +196,7 @@ The completed pilot includes:
 ✅ Scalp topographic visualization  
 ✅ Subject-level feature construction  
 
-The pilot served as a **method-development and validation stage** before the finalized workflow was applied to all 88 participants.
+The pilot served as a **method-development and quality-checking stage** before the finalized workflow was applied to all 88 participants.
 
 > **Important:** The pilot is not treated as a final disease-classification result. Its purpose is to establish a reproducible preprocessing and feature-extraction pipeline.
 
@@ -289,7 +289,7 @@ The 65 participants were divided using a stratified 80/20 train-test split:
 - **52 participants** for training
 - **13 participants** for the held-out test set
 
-The same train-test split was used for the Logistic Regression and SVM experiments.
+The same train-test split was used for the **Logistic Regression, SVM, and Random Forest** experiments.
 
 The final 13-participant test set was kept separate during model selection and hyperparameter tuning.
 
@@ -307,7 +307,7 @@ The standardized features were used to train a Logistic Regression classifier on
 
 The model learned coefficients describing the direction and relative magnitude of each feature's contribution to the classification decision.
 
-### Initial Test-Set Results
+### Test-Set Results
 
 The Logistic Regression model was evaluated on the held-out test set of 13 participants.
 
@@ -355,7 +355,7 @@ The standard deviation was:
 
 **10.9%**
 
-> **Methodological note:** This initial Logistic Regression cross-validation experiment included the subjects from the held-out test set because cross-validation was performed on all 65 participants. Therefore, these cross-validation results are treated as exploratory rather than as a final independent validation estimate. The SVM experiment subsequently used cross-validation only within the 52 training participants.
+> **Methodological note:** This initial Logistic Regression cross-validation experiment included the subjects from the held-out test set because cross-validation was performed on all 65 participants. Therefore, these cross-validation results are treated as exploratory rather than as a final independent validation estimate.
 
 ### 🧮 Logistic Regression Coefficients
 
@@ -399,7 +399,9 @@ with the default configuration:
 
 The initial SVM was evaluated on the same held-out test set of 13 participants.
 
-**Test accuracy: 76.9%**
+**Test Accuracy:** 76.9%
+
+**ROC-AUC:** 0.952
 
 The confusion matrix was:
 
@@ -417,23 +419,6 @@ This corresponds to:
 - **3 AD participants** classified as CN
 - **6 CN participants** correctly classified as CN
 - **0 CN participants** classified as AD
-
-The initial ROC-AUC was:
-
-**0.952**
-
-### Initial Classification Metrics
-
-The initial SVM classification report was:
-
-| Class | Precision | Recall | F1-score | Support |
-|---|---:|---:|---:|---:|
-| AD | 1.00 | 0.57 | 0.73 | 7 |
-| CN | 0.67 | 1.00 | 0.80 | 6 |
-
-Overall accuracy was:
-
-**76.9%**
 
 ### Cross-Validation and Hyperparameter Tuning
 
@@ -500,9 +485,129 @@ Therefore:
 
 ---
 
+## 🌲 Random Forest
+
+The third classification experiment used a **Random Forest** classifier.
+
+Random Forest is an ensemble method that combines multiple decision trees to produce the final classification.
+
+Unlike Logistic Regression and SVM, Random Forest does **not require feature standardization**, so the five EEG features were used directly.
+
+### Initial Random Forest Configuration
+
+The initial model was created using:
+
+```python
+RandomForestClassifier(
+    random_state=42
+)
+```
+
+The initial model used the default Random Forest configuration with a fixed random state for reproducibility.
+
+### Initial Test-Set Results
+
+The initial Random Forest was evaluated on the same held-out test set of 13 participants.
+
+**Test Accuracy:** 84.6%
+
+**ROC-AUC:** 0.857
+
+The confusion matrix was:
+
+```text
+                 Predicted
+                 AD    CN
+
+Actual AD         5     2
+Actual CN         0     6
+```
+
+This corresponds to:
+
+- **5 AD participants** correctly classified as AD
+- **2 AD participants** classified as CN
+- **6 CN participants** correctly classified as CN
+- **0 CN participants** classified as AD
+
+Therefore:
+
+**11 of 13 test participants were correctly classified.**
+
+### Cross-Validation and Hyperparameter Tuning
+
+A 5-fold stratified cross-validation procedure was initially performed only on the **52 training participants**.
+
+The initial cross-validation scores were:
+
+```text
+0.545
+0.727
+0.900
+0.800
+0.900
+```
+
+The mean cross-validation accuracy was:
+
+**77.5%**
+
+The standard deviation was:
+
+**13.2%**
+
+`GridSearchCV` was then used to evaluate:
+
+- `n_estimators`: 100, 200, 300
+- `max_depth`: `None`, 5, 10
+- `min_samples_split`: 2, 5
+- `min_samples_leaf`: 1, 2
+
+This produced **36 parameter combinations**, each evaluated using 5-fold stratified cross-validation within the 52 training participants.
+
+### Best Parameters
+
+The selected parameters were:
+
+```text
+n_estimators = 100
+max_depth = 5
+min_samples_split = 2
+min_samples_leaf = 1
+```
+
+Best mean cross-validation accuracy:
+
+**79.3%**
+
+Standard deviation for the selected parameter combination:
+
+**10.2%**
+
+### Tuned Random Forest Test Results
+
+The tuned Random Forest was evaluated on the same untouched 13-participant test set.
+
+| Metric | Result |
+|---|---:|
+| Test Accuracy | **84.6%** |
+| ROC-AUC | **0.857** |
+
+The tuned Random Forest produced the same class predictions as the initial Random Forest on the held-out test set.
+
+Therefore:
+
+**11 of 13 test participants were correctly classified.**
+
+> **Important:** The Random Forest ROC-AUC of 0.857 reflects the ranking of predicted probabilities on this particular 13-participant test set. Given the small test-set size, it should not be interpreted as evidence of strong generalization or clinical diagnostic performance.
+
+---
+
 ## 📊 Model Visualizations
 
-The Logistic Regression and SVM analyses include corresponding visualizations that allow the two models to be viewed side by side.
+The three classification models include corresponding visualizations covering:
+
+**Prediction Confidence → Feature Interpretation → Feature Contributions**
 
 ### 🔎 Prediction Confidence
 
@@ -510,18 +615,22 @@ The Logistic Regression and SVM analyses include corresponding visualizations th
 <tr>
 <td align="center"><strong>Logistic Regression</strong></td>
 <td align="center"><strong>SVM</strong></td>
+<td align="center"><strong>Random Forest</strong></td>
 </tr>
 <tr>
 <td align="center">
-<img src="figures/logistic_regression/prediction_confidence.png" width="450">
+<img src="figures/logistic_regression/prediction_confidence.png" width="300">
 </td>
 <td align="center">
-<img src="figures/svm/prediction_confidence.png" width="450">
+<img src="figures/svm/prediction_confidence.png" width="300">
+</td>
+<td align="center">
+<img src="figures/random_forest/prediction_confidence.png" width="300">
 </td>
 </tr>
 </table>
 
-The Logistic Regression visualization shows predicted class probabilities, while the SVM visualization shows decision scores relative to the SVM decision boundary.
+The Logistic Regression visualization shows predicted class probabilities, the SVM visualization shows decision scores relative to the SVM decision boundary, and the Random Forest visualization shows predicted CN probabilities relative to a 0.5 classification threshold.
 
 ### 🧬 Model Feature Interpretation
 
@@ -529,20 +638,24 @@ The Logistic Regression visualization shows predicted class probabilities, while
 <tr>
 <td align="center"><strong>Logistic Regression Coefficients</strong></td>
 <td align="center"><strong>SVM Feature Importance</strong></td>
+<td align="center"><strong>Random Forest Feature Importance</strong></td>
 </tr>
 <tr>
 <td align="center">
-<img src="figures/logistic_regression/logistic_coefficients.png" width="450">
+<img src="figures/logistic_regression/logistic_coefficients.png" width="300">
 </td>
 <td align="center">
-<img src="figures/svm/feature_importance.png" width="450">
+<img src="figures/svm/feature_importance.png" width="300">
+</td>
+<td align="center">
+<img src="figures/random_forest/feature_importance.png" width="300">
 </td>
 </tr>
 </table>
 
 The Logistic Regression plot shows the direction and relative magnitude of the learned coefficients.
 
-The SVM plot uses permutation importance, showing how much model accuracy changes when an EEG feature is randomly shuffled.
+The SVM and Random Forest plots use permutation importance, showing how model accuracy changes when an EEG feature is randomly shuffled.
 
 These visualizations describe different model properties and should not be interpreted as directly equivalent quantities.
 
@@ -552,13 +665,17 @@ These visualizations describe different model properties and should not be inter
 <tr>
 <td align="center"><strong>Logistic Regression</strong></td>
 <td align="center"><strong>SVM</strong></td>
+<td align="center"><strong>Random Forest</strong></td>
 </tr>
 <tr>
 <td align="center">
-<img src="figures/logistic_regression/feature_contributions.png" width="450">
+<img src="figures/logistic_regression/feature_contributions.png" width="300">
 </td>
 <td align="center">
-<img src="figures/svm/feature_contributions.png" width="450">
+<img src="figures/svm/feature_contributions.png" width="300">
+</td>
+<td align="center">
+<img src="figures/random_forest/feature_contributions.png" width="300">
 </td>
 </tr>
 </table>
@@ -567,26 +684,28 @@ The Logistic Regression heatmap visualizes the local contribution of standardize
 
 The SVM heatmap visualizes the change in SVM decision score when individual test-set features are replaced by their corresponding training-set means.
 
-> Because the SVM uses an RBF kernel, these values should not be interpreted as Logistic Regression-style coefficients.
+The Random Forest heatmap visualizes the change in predicted CN probability when individual test-set features are replaced by their corresponding training-set means.
+
+Because the SVM and Random Forest use nonlinear models, these values should not be interpreted as Logistic Regression-style coefficients.
 
 ---
 
-## 📈 Logistic Regression vs SVM
+## 📈 Model Comparison
 
-A dedicated comparison visualization was created using the saved results from both models.
+A dedicated three-model comparison visualization was created using the saved results from Logistic Regression, SVM, and Random Forest.
 
 The comparison shows:
 
 - Test Accuracy
 - ROC-AUC
 
-Both models were evaluated on the **same 13-participant held-out test set**.
+All three models were evaluated on the **same 13-participant held-out test set**.
 
 <p align="center">
-  <img src="figures/model_comparison/logistic_regression_vs_svm.png" width="900">
+  <img src="figures/model_comparison/logistic_regression_vs_svm_vs_random_forest.png" width="900">
 </p>
 
-> The comparison visualization presents the recorded test-set results side by side. It does not account for the difference in cross-validation protocols between the initial Logistic Regression analysis and the corrected SVM analysis.
+The comparison visualization presents the recorded test-set results for all three models. The test set is small, so these metrics should be interpreted as results for this specific experimental split rather than as estimates of clinical diagnostic performance.
 
 ---
 
@@ -596,19 +715,27 @@ A major consideration in EEG machine learning is that multiple epochs can origin
 
 Therefore, subject-level separation is maintained throughout the machine-learning workflow.
 
-For both models, the final model fits used the **52 training participants**, while the **13-participant test set** was reserved for final held-out evaluation.
+For all three models, the final model fits used the **52 training participants**, while the **13-participant test set** was reserved for final held-out evaluation.
 
 The initial Logistic Regression cross-validation experiment was performed separately on all 65 participants and therefore included the held-out test subjects. This result is treated as exploratory and is not considered an independent validation estimate.
 
-For SVM hyperparameter tuning, cross-validation was performed only within the **52 training participants**, with scaling included inside the pipeline so that scaling parameters were learned independently within each training fold.
+For SVM and Random Forest, cross-validation and hyperparameter tuning were performed only within the **52 training participants**.
 
-Future model experiments will follow the corrected approach of performing cross-validation and model selection only within the training set.
+For SVM, feature scaling was included inside the pipeline so that scaling parameters were learned independently within each training fold.
+
+Random Forest did not require feature scaling because it is a tree-based model.
+
+Future model experiments will continue to use subject-level separation and training-only cross-validation.
 
 ---
 
-## 🔜 Next Model
+## 🔜 Next Stage
 
-The next classification experiment will evaluate a **Random Forest** classifier using the same subject-level EEG feature dataset and a consistent evaluation framework.
+The current classification stage has now been completed using:
+
+**Logistic Regression → SVM → Random Forest**
+
+The next stage will focus on consolidating the three-model results, examining the model behavior and EEG feature patterns more systematically, and documenting the findings within the project.
 
 ---
 
@@ -673,14 +800,21 @@ alzheimers-eeg-ml/
 │   │   ├── feature_importance.png
 │   │   └── prediction_confidence.png
 │   │
+│   ├── random_forest/
+│   │   ├── feature_contributions.png
+│   │   ├── feature_importance.png
+│   │   └── prediction_confidence.png
+│   │
 │   └── model_comparison/
-│       └── logistic_regression_vs_svm.png
+│       ├── logistic_regression_vs_svm.png
+│       └── logistic_regression_vs_svm_vs_random_forest.png
 │
 ├── notebooks/
 │   ├── 01_pilot_analysis.ipynb                         # Complete pilot workflow
 │   ├── 02_all_subjects_features.ipynb                  # Automated feature extraction
 │   ├── 03_machine_learning_logistic_regression.ipynb   # AD vs CN Logistic Regression
-│   └── 04_machine_learning_svm.ipynb                   # AD vs CN Support Vector Machine
+│   ├── 04_machine_learning_svm.ipynb                   # AD vs CN Support Vector Machine
+│   └── 05_machine_learning_random_forest.ipynb         # AD vs CN Random Forest
 │ 
 ├── .gitignore
 │
